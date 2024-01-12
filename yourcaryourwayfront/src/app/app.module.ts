@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.routing';
 import { HttpClientModule } from '@angular/common/http';
 import { ChatService } from './services/chat.service';
-import { ChatModule } from './module/chatModule.module';
 
 @NgModule({
   declarations: [
@@ -21,9 +20,9 @@ import { ChatModule } from './module/chatModule.module';
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    ChatModule.forRoot()
+    //ChatModule.forRoot()
   ],
-  providers: [],
+  providers: [ChatService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

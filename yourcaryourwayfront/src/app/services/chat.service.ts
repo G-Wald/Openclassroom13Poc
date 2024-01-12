@@ -1,42 +1,63 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, switchMap} from 'rxjs';
 import { ChatMessage } from '../models/ChatMessage';
 import { interval} from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
   private apiUrl = 'http://localhost:8080/api'; 
-
+  private static instanceCount = 0;
+  private readonly instanceId: number;
+  private instanceINITId: number= 0;
   constructor(private http: HttpClient) {
     /*interval(1000)
       .pipe().subscribe(()=>{
         console.log(this.messagesSubject);
 
       });*/
-      this.getMessages(new ChatMessage("tata","sav",""));
-    
+      //this.getMessages(new ChatMessage("tata","sav",""));
+      ChatService.instanceCount++;
+      this.instanceId = Date.now();
+      console.log(`MyService instance created with ID: ${this.instanceId}`);
     }
 
+   
   public messagesSubject: BehaviorSubject<ChatMessage[]> = new BehaviorSubject<ChatMessage[]>([]);
   
-  testMessage: ChatMessage[] = [];
+  //testMessage: ChatMessage[] = [];
+  loadMessages(message: ChatMessage) {
+    return this.http.post<ChatMessage[]>(`${this.apiUrl}/messages`, message);
+  }
 
   getMessages(message: ChatMessage) {
-    this.http.post<ChatMessage[]>(`${this.apiUrl}/messages`, message).subscribe(messages =>
+    return this.http.post<ChatMessage[]>(`${this.apiUrl}/messages`, message).subscribe(messages =>
       {
-        this.messagesSubject.next(messages);
+        //this.messagesSubject.next(messages);
+        return this.messagesSubject.asObservable();
       });
   }
 
-  getMessagesObservable(): Observable<ChatMessage[]> {
+  GetObs(){
     return this.messagesSubject.asObservable();
   }
 
+/******* plus util
+  getMessagesObservable(): Observable<ChatMessage[]> {
+    return this.messagesSubject.asObservable();
+  }
+******/
+
+  /*getMessagesObservable(): Observable<ChatMessage[]> {
+    return this.messagesSubject.asObservable();
+  }*/
+
   sendMessage(message: ChatMessage): void {
-    this.http.post<ChatMessage[]>(`${this.apiUrl}/sendmessage`, message).subscribe((messages) => {
+    this.http.post<ChatMessage[]>(`${this.apiUrl}/sendmessage`, message)
+    .subscribe((messages) => {
       this.messagesSubject.next(messages);
       //this.getMessages(message);
     })

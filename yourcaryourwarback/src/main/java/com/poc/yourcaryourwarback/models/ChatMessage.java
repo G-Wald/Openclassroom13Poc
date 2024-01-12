@@ -11,9 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "chatmessages")
 @Data
-@EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
@@ -38,4 +36,11 @@ public class ChatMessage {
     @CreatedDate
     @Column(name = "Timestamp")
     private LocalDateTime Timestamp;
+
+    public ChatMessage(int senderID, int receiverID, String messageText) {
+        this.SenderID = senderID;
+        this.ReceiverID = receiverID;
+        this.MessageText = messageText;
+        this.Timestamp = LocalDateTime.now();
+    }
 }

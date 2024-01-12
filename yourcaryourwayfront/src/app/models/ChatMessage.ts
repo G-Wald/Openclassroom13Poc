@@ -1,11 +1,11 @@
 export class ChatMessage {
-    SenderUsername: string;
-    ReceiverUsername: string;
-    MessageText: string;
+    senderUsername: string;
+    receiverUsername: string;
+    messageText: string;
 
-    constructor(SenderUsername: string, ReceiverUsername : string, MessageText : string) {
-        this.SenderUsername = SenderUsername;
-        this.ReceiverUsername = ReceiverUsername;
-        this.MessageText = MessageText;
+    constructor(senderUsername: string, receiverUsername : string, messageText : string) {
+        this.senderUsername = senderUsername;
+        this.receiverUsername = receiverUsername;
+        this.messageText = messageText;
     }
 }

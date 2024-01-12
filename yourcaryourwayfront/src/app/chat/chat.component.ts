@@ -9,7 +9,7 @@ import { ChatMessage } from '../models/ChatMessage';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
-  messages: string[] = [];
+  messages: ChatMessage[] = [];
   newMessage: string = '';
 
   constructor(private chatService: ChatService) { }
@@ -19,18 +19,18 @@ export class ChatComponent implements OnInit {
   }
 
   loadMessages() {
-    this.chatService.getMessages(new ChatMessage ("taataa","sav", " ")).subscribe(messages => {
+    this.chatService.getMessagesObservable().subscribe(messages => {
       this.messages = messages;
     });
+
+   
+    this.chatService.getMessages(new ChatMessage ("tata","sav", "")).subscribe();
   }
 
   sendMessage() {
     if (this.newMessage.trim() !== '') {
-      console.log(new ChatMessage ("taataa","sav", this.newMessage))
-      this.chatService.sendMessage(new ChatMessage ("taataa","sav", this.newMessage)).subscribe((messages) => {
-        this.newMessage = '';
-      this.messages = messages;
-      });
+      this.chatService.sendMessage(new ChatMessage ("tata","sav", this.newMessage));
+      this.newMessage = '';
     }
   }
 }

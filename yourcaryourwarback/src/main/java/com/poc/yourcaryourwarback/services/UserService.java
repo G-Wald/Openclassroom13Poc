@@ -34,4 +34,10 @@ public class UserService {
         return LoginResponse.builder().email(user.getEmail()).username(user.getUsername()).build();
     }
 
+    public String getUsernameById(int id){
+
+        Optional<User> user = userRepository.findById(id);
+
+        return user.map(User::getUsername).orElse("");
+    }
 }

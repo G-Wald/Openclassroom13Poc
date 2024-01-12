@@ -6,6 +6,7 @@ import com.poc.yourcaryourwarback.models.ChatMessageSend;
 import com.poc.yourcaryourwarback.models.User;
 import com.poc.yourcaryourwarback.models.responses.LoginResponse;
 import com.poc.yourcaryourwarback.repository.MessageRepository;
+import com.poc.yourcaryourwarback.services.MessageService;
 import com.poc.yourcaryourwarback.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +21,16 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
 public class ChatController {
-    private final MessageRepository messageRepository;
+    private final MessageService messageService;
     private final UserService userService;
 
-    public ChatController(UserService userService, MessageRepository messageRepository ) {
+    public ChatController(UserService userService, MessageService messageService ) {
         this.userService = userService;
-        this.messageRepository = messageRepository;
+        this.messageService = messageService;
     }
 
     @PostMapping("/messages")
-    public ResponseEntity<List<String>> getMessages(@RequestBody ChatMessageSend message) {
+    public ResponseEntity<List<ChatMessageSend>> getMessages(@RequestBody ChatMessageSend message) {
         User sender = userService.findByUsernameOrEmail(message.getSenderUsername());
         User receiver = userService.findByUsernameOrEmail(message.getReceiverUsername());
 
@@ -37,12 +38,17 @@ public class ChatController {
             return ResponseEntity.status(404).build();
         }
 
-        List<ChatMessage> chatMessages =  messageRepository.findAllChatMessage(sender.getId(), receiver.getId());
-        return  ResponseEntity.ok(chatMessages.stream().map(ChatMessage::getMessageText).collect(Collectors.toList()));
+        List<ChatMessage> chatMessages = messageService.GetAllMessage(sender.getId(), receiver.getId());
+
+        return ResponseEntity.ok().body(chatMessages.stream()
+                .map(chatMessage -> {
+                    return new ChatMessageSend(userService.getUsernameById(chatMessage.getSenderID()),
+                            userService.getUsernameById(chatMessage.getReceiverID()), chatMessage.getMessageText());
+                }).collect(Collectors.toList()));
     }
 
     @PostMapping("/sendmessage")
-    public ResponseEntity<List<String>> sendMessage(@RequestBody ChatMessageSend message) {
+    public ResponseEntity<List<ChatMessageSend>> sendMessage(@RequestBody ChatMessageSend message) {
         User sender = userService.findByUsernameOrEmail(message.getSenderUsername());
         User receiver = userService.findByUsernameOrEmail(message.getReceiverUsername());
 
@@ -50,13 +56,12 @@ public class ChatController {
             return ResponseEntity.status(404).build();
         }
 
-        messageRepository.save(ChatMessage.builder()
-                .SenderID(sender.getId())
-                .ReceiverID(receiver.getId())
-                .MessageText(message.getMessageText())
-                .build());
+        messageService.save(new ChatMessage(sender.getId(), receiver.getId(), message.getMessageText()));
 
-        List<ChatMessage> chatMessages =  messageRepository.findAllChatMessage(sender.getId(), receiver.getId());
-        return  ResponseEntity.ok(chatMessages.stream().map(ChatMessage::getMessageText).collect(Collectors.toList()));
+        List<ChatMessage> chatMessages = messageService.GetAllMessage(sender.getId(), receiver.getId());
+
+        return ResponseEntity.ok().body(chatMessages.stream()
+                .map(chatMessage -> new ChatMessageSend(userService.getUsernameById(chatMessage.getSenderID()),
+                        userService.getUsernameById(chatMessage.getReceiverID()), chatMessage.getMessageText())).collect(Collectors.toList()));
     }
 }

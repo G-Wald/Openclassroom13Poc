@@ -4,16 +4,11 @@ package com.poc.yourcaryourwarback.controllers;
 import com.poc.yourcaryourwarback.models.ChatMessage;
 import com.poc.yourcaryourwarback.models.ChatMessageSend;
 import com.poc.yourcaryourwarback.models.User;
-import com.poc.yourcaryourwarback.models.responses.LoginResponse;
-import com.poc.yourcaryourwarback.repository.MessageRepository;
 import com.poc.yourcaryourwarback.services.MessageService;
 import com.poc.yourcaryourwarback.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,5 +58,6 @@ public class ChatController {
         return ResponseEntity.ok().body(chatMessages.stream()
                 .map(chatMessage -> new ChatMessageSend(userService.getUsernameById(chatMessage.getSenderID()),
                         userService.getUsernameById(chatMessage.getReceiverID()), chatMessage.getMessageText())).collect(Collectors.toList()));
+        //return ResponseEntity.ok().build();
     }
 }

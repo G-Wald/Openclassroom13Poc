@@ -7,18 +7,21 @@ import { LoginComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.routing';
 import { HttpClientModule } from '@angular/common/http';
+import { ChatService } from './services/chat.service';
+import { ChatModule } from './module/chatModule.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     ChatComponent,
-    LoginComponent
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    ChatModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

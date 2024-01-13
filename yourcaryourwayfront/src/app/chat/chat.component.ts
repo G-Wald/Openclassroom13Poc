@@ -13,23 +13,15 @@ import { ChatService } from '../services/chat.service';
 export class ChatComponent implements OnInit, OnDestroy {
   messages: ChatMessage[] = [];
   newMessage: string = '';
-  test : Observable<ChatMessage[]>
   private destroy$: Subject<void> = new Subject<void>();
 
   constructor(private chatService: ChatService) { 
-    this.test = this.chatService.GetObs();
-    this.test.subscribe({next : (value) => this.messages = value})
+    this.chatService.messagesSubject.subscribe((messages)=>(this.messages = messages))
   }
 
   ngOnInit() {
-    
-    this.chatService.loadMessages(new ChatMessage ("tata","sav", this.newMessage))
-    .subscribe({next : (messages) => this.messages = messages});
-    console.log(this.test)
-    //this.test.subscribe((te) => console.log(te))
-    interval(1000).pipe().subscribe((updatedMessages) => {
-      console.log('Updated messages:', this.chatService.messagesSubject.getValue());
-    });
+    this.chatService.loadMessages(new ChatMessage ("tata","sav", this.newMessage)).subscribe((messages) => this.messages = messages);
+    this.chatService.handleIncomingMessage();
   }
 
   sendMessage() {

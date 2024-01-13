@@ -2,65 +2,58 @@ import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, switchMap} from 'rxjs';
 import { ChatMessage } from '../models/ChatMessage';
-import { interval} from 'rxjs';
-
+import { Stomp } from '@stomp/stompjs';
+import * as SockJS from 'sockjs-client';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private apiUrl = 'http://localhost:8080/api'; 
-  private static instanceCount = 0;
-  private readonly instanceId: number;
-  private instanceINITId: number= 0;
-  constructor(private http: HttpClient) {
-    /*interval(1000)
-      .pipe().subscribe(()=>{
-        console.log(this.messagesSubject);
+  private apiUrl = 'http://localhost:3000/api';
 
-      });*/
-      //this.getMessages(new ChatMessage("tata","sav",""));
-      ChatService.instanceCount++;
-      this.instanceId = Date.now();
-      console.log(`MyService instance created with ID: ${this.instanceId}`);
+  private stompClient: any
+
+  constructor(private http: HttpClient) {
+    this.initializeWebSocketConnection();
+  }
+
+  private initializeWebSocketConnection() {
+    const url = '//localhost:3000/chat-socket';
+    const socket = new SockJS(url);
+    this.stompClient = Stomp.over(socket)
     }
 
-   
   public messagesSubject: BehaviorSubject<ChatMessage[]> = new BehaviorSubject<ChatMessage[]>([]);
-  
-  //testMessage: ChatMessage[] = [];
+
+
+  handleIncomingMessage() {
+    this.stompClient.connect({}, ()=>{
+      this.stompClient.subscribe(`/topic/messages`, (messages: any) => {
+        const messageContent = JSON.parse(messages.body);
+        const currentMessage = this.messagesSubject.getValue();
+        currentMessage.push(messageContent);
+
+        this.messagesSubject.next(currentMessage);
+
+      })
+    },
+    (error : any) => {
+      console.error('WebSocket Error:', error);
+      // Handle connection error
+    }
+    
+    
+    )
+  }
+
+  sendMessage(message: ChatMessage): void {
+    // Send the message through the WebSocket
+    this.stompClient.send(`/app/chat`, {}, JSON.stringify(message));
+  }
+
   loadMessages(message: ChatMessage) {
     return this.http.post<ChatMessage[]>(`${this.apiUrl}/messages`, message);
   }
 
-  getMessages(message: ChatMessage) {
-    return this.http.post<ChatMessage[]>(`${this.apiUrl}/messages`, message).subscribe(messages =>
-      {
-        //this.messagesSubject.next(messages);
-        return this.messagesSubject.asObservable();
-      });
-  }
-
-  GetObs(){
-    return this.messagesSubject.asObservable();
-  }
-
-/******* plus util
-  getMessagesObservable(): Observable<ChatMessage[]> {
-    return this.messagesSubject.asObservable();
-  }
-******/
-
-  /*getMessagesObservable(): Observable<ChatMessage[]> {
-    return this.messagesSubject.asObservable();
-  }*/
-
-  sendMessage(message: ChatMessage): void {
-    this.http.post<ChatMessage[]>(`${this.apiUrl}/sendmessage`, message)
-    .subscribe((messages) => {
-      this.messagesSubject.next(messages);
-      //this.getMessages(message);
-    })
-  }
 }
 

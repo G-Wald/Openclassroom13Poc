@@ -7,8 +7,5 @@ import { ChatService } from './services/chat.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(private chatService: ChatService) {
-      console.log(`Com^pposant perrrreeererere: ${Date.now()}`);
-  }
   title = 'yourcaryourwayfront';
 }

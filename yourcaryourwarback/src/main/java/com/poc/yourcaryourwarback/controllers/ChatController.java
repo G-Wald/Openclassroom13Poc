@@ -7,13 +7,14 @@ import com.poc.yourcaryourwarback.models.User;
 import com.poc.yourcaryourwarback.services.MessageService;
 import com.poc.yourcaryourwarback.services.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api")
 public class ChatController {
     private final MessageService messageService;
@@ -58,6 +59,5 @@ public class ChatController {
         return ResponseEntity.ok().body(chatMessages.stream()
                 .map(chatMessage -> new ChatMessageSend(userService.getUsernameById(chatMessage.getSenderID()),
                         userService.getUsernameById(chatMessage.getReceiverID()), chatMessage.getMessageText())).collect(Collectors.toList()));
-        //return ResponseEntity.ok().build();
     }
 }

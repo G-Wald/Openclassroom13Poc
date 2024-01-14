@@ -22,9 +22,6 @@ export class AuthService {
 
 
   isSAVUser(): boolean {
-
-    console.log("IsSAVUSer")
-    console.log(this.username)
     return this.username === 'sav';
   }
 }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface MessageRepository extends JpaRepository<ChatMessage, Integer> {
-    @Query("SELECT m FROM ChatMessage m WHERE m.SenderID  = :senderId AND m.ReceiverID  = :receiverId")
-    List<ChatMessage> findAllChatMessage(int senderId, int receiverId);
+    @Query("SELECT m FROM ChatMessage m WHERE " +
+            "(m.SenderID  = :userId ) " +
+            "OR (m.ReceiverID = :userId)")
+    List<ChatMessage> findAllChatMessage(int userId);
 }

@@ -25,16 +25,15 @@ public class ChatController {
         this.messageService = messageService;
     }
 
-    @PostMapping("/messages")
-    public ResponseEntity<List<ChatMessageSend>> getMessages(@RequestBody ChatMessageSend message) {
-        User sender = userService.findByUsernameOrEmail(message.getSenderUsername());
-        User receiver = userService.findByUsernameOrEmail(message.getReceiverUsername());
+    @GetMapping("/messages/{username}")
+    public ResponseEntity<List<ChatMessageSend>> getMessages(@PathVariable String username) {
+        User user = userService.findByUsernameOrEmail(username);
 
-        if(sender == null || receiver == null) {
+        if(user == null) {
             return ResponseEntity.status(404).build();
         }
 
-        List<ChatMessage> chatMessages = messageService.GetAllMessage(sender.getId(), receiver.getId());
+        List<ChatMessage> chatMessages = messageService.GetAllMessage(user.getId());
 
         return ResponseEntity.ok().body(chatMessages.stream()
                 .map(chatMessage -> {
@@ -43,21 +42,4 @@ public class ChatController {
                 }).collect(Collectors.toList()));
     }
 
-    @PostMapping("/sendmessage")
-    public ResponseEntity<List<ChatMessageSend>> sendMessage(@RequestBody ChatMessageSend message) {
-        User sender = userService.findByUsernameOrEmail(message.getSenderUsername());
-        User receiver = userService.findByUsernameOrEmail(message.getReceiverUsername());
-
-        if(sender == null || receiver == null) {
-            return ResponseEntity.status(404).build();
-        }
-
-        messageService.save(new ChatMessage(sender.getId(), receiver.getId(), message.getMessageText()));
-
-        List<ChatMessage> chatMessages = messageService.GetAllMessage(sender.getId(), receiver.getId());
-
-        return ResponseEntity.ok().body(chatMessages.stream()
-                .map(chatMessage -> new ChatMessageSend(userService.getUsernameById(chatMessage.getSenderID()),
-                        userService.getUsernameById(chatMessage.getReceiverID()), chatMessage.getMessageText())).collect(Collectors.toList()));
-    }
 }

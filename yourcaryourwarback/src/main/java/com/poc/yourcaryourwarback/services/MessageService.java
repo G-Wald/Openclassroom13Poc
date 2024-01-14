@@ -18,10 +18,9 @@ public class MessageService {
 
     private final MessageRepository messageRepository;
 
-    public List<ChatMessage> GetAllMessage(int senderId, int receiverId){
+    public List<ChatMessage> GetAllMessage(int userId){
 
-        List<ChatMessage> chatMessages =  messageRepository.findAllChatMessage(senderId, receiverId);
-        chatMessages.addAll(messageRepository.findAllChatMessage(receiverId, senderId));
+        List<ChatMessage> chatMessages =  messageRepository.findAllChatMessage(userId);
         return chatMessages.stream()
                 .sorted(Comparator.comparing(ChatMessage::getTimestamp))
                 .collect(Collectors.toList());

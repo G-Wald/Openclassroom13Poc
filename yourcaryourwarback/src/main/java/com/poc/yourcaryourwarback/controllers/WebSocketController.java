@@ -43,7 +43,7 @@ public class WebSocketController {
         }
 
         messagingTemplate.convertAndSend("/topic/messages", message);
-        
+
         messagingTemplate.convertAndSend(destination, message);
 
         return message;

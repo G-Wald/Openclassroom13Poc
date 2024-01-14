@@ -57,7 +57,7 @@ export class ChatService {
     this.stompClient.send(`/app/chat`, {}, JSON.stringify(message));
   }
 
-  loadMessages(message: ChatMessage) {
-    return this.http.post<ChatMessage[]>(`${this.apiUrl}/messages`, message);
+  loadMessages(username : String) {
+    return this.http.get<ChatMessage[]>(`${this.apiUrl}/messages/${username}`);
   }
 }

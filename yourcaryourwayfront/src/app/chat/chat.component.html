@@ -1,35 +1,38 @@
-<div *ngIf="!isSavUser">
-    <h2>Live Chat SAV</h2>
+<div *ngIf="!isSavUser" class="chat-main">
+  <h2 class="chat-header">Live Chat SAV</h2>
+  <div class="chat-container" >
+    <div class="message-container" >
+      <div class="scrollContainer" > 
+  <div *ngFor="let message of messages" [ngClass]="{'left-message': message.senderUsername === 'sav', 'right-message': message.senderUsername !== 'sav'}">
+    <strong>{{ message.senderUsername }}</strong>: {{ message.messageText }}
+  </div>
+</div>
+  <div>
+    <textarea [(ngModel)]="newMessage" placeholder="Type your message..." class="message-input"></textarea>
+    <button (click)="sendMessage('sav')" [disabled]="newMessage.trim() === ''" class="send-button">Send</button>
+  </div>
+</div>
 
-    <div *ngFor="let message of messages">
-      <strong>{{ message.senderUsername }}</strong>: {{ message.messageText }}
-    </div>
-  
-    <div>
-      <textarea [(ngModel)]="newMessage" placeholder="Type your message..."></textarea>
-      <button (click)="sendMessage('sav')">Send</button>
 </div>
 </div>
 
+<div *ngIf="isSavUser" class="chat-main">
+  <h2 class="chat-header">Live Chat SAV</h2>
+<div class="chat-container" >
+  <div *ngFor="let conversation of conversations | keyvalue" class="message-container" >
+    <h2 class="chat-title">Conversation : {{conversation.key}}</h2>
 
-<div *ngIf="isSavUser">
-  <h2>Live Chat SAV</h2>
-  
-    <div *ngFor="let conversation of conversations | keyvalue">
-
-      
-    <div *ngFor="let message of conversation.value">
+    <div class="scrollContainer" > 
+    <div *ngFor="let message of conversation.value" [ngClass]="{'left-message': message.senderUsername !== 'sav', 'right-message': message.senderUsername === 'sav'}">
       <strong>{{ message.senderUsername }}</strong>: {{ message.messageText }}
-    </div>
-
-    <div>
-      <textarea [(ngModel)]="newMessage" placeholder="Type your message..."></textarea>
-      <button (click)="sendMessage(conversation.key)">Send</button>
     </div>
   </div>
-
-
-
+    <div>
+      <textarea [(ngModel)]="newMessage" placeholder="Type your message..." class="message-input"></textarea>
+      <button (click)="sendMessage(conversation.key)" [disabled]="newMessage.trim() === ''" class="send-button">Send</button>
+    </div>
+  </div>
+</div>
 </div>
 
 

@@ -1,6 +1,6 @@
-<div *ngIf="!this.authService.isSAVUser()">
+<div *ngIf="!isSavUser">
     <h2>Live Chat SAV</h2>
-    <h1>{{this.authService.username}}</h1>
+
     <div *ngFor="let message of messages">
       <strong>{{ message.senderUsername }}</strong>: {{ message.messageText }}
     </div>
@@ -9,19 +9,28 @@
       <textarea [(ngModel)]="newMessage" placeholder="Type your message..."></textarea>
       <button (click)="sendMessage('sav')">Send</button>
 </div>
-
-
-<div *ngIf="this.authService.isSAVUser()">
-  <h2>Live Chat SAV</h2>
-  <div *ngFor="let conversation of conversations | keyvalue">
-
-  <h1>{{this.authService.username}}</h1>
-  <div *ngFor="let message of conversation.value">
-    <strong>{{ message.senderUsername }}</strong>: {{ message.messageText }}
-  </div>
-
-  <div>
-    <textarea [(ngModel)]="newMessage" placeholder="Type your message..."></textarea>
-    <button (click)="sendMessage(conversation.key)">Send</button>
-  </div>
 </div>
+
+
+<div *ngIf="isSavUser">
+  <h2>Live Chat SAV</h2>
+  
+    <div *ngFor="let conversation of conversations | keyvalue">
+
+      
+    <div *ngFor="let message of conversation.value">
+      <strong>{{ message.senderUsername }}</strong>: {{ message.messageText }}
+    </div>
+
+    <div>
+      <textarea [(ngModel)]="newMessage" placeholder="Type your message..."></textarea>
+      <button (click)="sendMessage(conversation.key)">Send</button>
+    </div>
+  </div>
+
+
+
+</div>
+
+
+

@@ -1,4 +1,3 @@
-// auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
@@ -14,7 +13,6 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(credentials: { usernameOrEmail: string; password: string }): Observable<any> {
-    // Appel à votre API pour l'authentification
     return this.http.post(`${this.apiUrl}/login`, credentials)
     .pipe(
         map((response: any) => 
@@ -24,6 +22,9 @@ export class AuthService {
 
 
   isSAVUser(): boolean {
+
+    console.log("IsSAVUSer")
+    console.log(this.username)
     return this.username === 'sav';
   }
 }

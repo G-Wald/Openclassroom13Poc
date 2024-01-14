@@ -16,22 +16,28 @@ export class ChatComponent implements OnInit, OnDestroy {
   conversations: { [username: string]: ChatMessage[] } = {}; 
   newMessage: string = '';
   private destroy$: Subject<void> = new Subject<void>();
+  isSavUser : boolean;
 
-  constructor(private chatService: ChatService, public authService : AuthService) { 
+  constructor(private chatService: ChatService, private authService : AuthService) { 
+
+
     this.chatService.messagesSubject.subscribe((messages)=>
     {
+      console.log(messages)
       if(this.authService.isSAVUser()){
-        messages.forEach((message) => {
-          const conversationKey = this.getConversationKey(message);
-          if (!this.conversations[conversationKey]) {
-            this.conversations[conversationKey] = [];
+          const conversationKey = this.getConversationKey(messages);
+          if(conversationKey != ""){
+            if (!this.conversations[conversationKey]) {
+              this.conversations[conversationKey] = [];
+            }
+            this.conversations[conversationKey].push(messages);
+            console.log(this.conversations)
           }
-          this.conversations[conversationKey].push(message);
-        })
       }else{
-        this.messages.push(...messages)
+        this.messages.push(messages)
       }
     })
+    this.isSavUser = this.authService.isSAVUser()
   }
 
   ngOnInit() {
@@ -45,6 +51,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
         this.conversations[conversationKey].push(message);
       })
+      console.log("ATTENTION init !!!!!!!!!!!!!!!!");
+      console.log(this.conversations);
     }else{
       this.messages = messages
     }

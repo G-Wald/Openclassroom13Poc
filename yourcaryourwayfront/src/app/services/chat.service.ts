@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject, switchMap} from 'rxjs';
 import { ChatMessage } from '../models/ChatMessage';
 import { Stomp } from '@stomp/stompjs';
 import * as SockJS from 'sockjs-client';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class ChatService {
 
   private stompClient: any
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService : AuthService) {
     this.initializeWebSocketConnection();
   }
 
@@ -28,21 +29,29 @@ export class ChatService {
 
   handleIncomingMessage() {
     this.stompClient.connect({}, ()=>{
-      this.stompClient.subscribe(`/topic/messages`, (messages: any) => {
+      let destination: string;
+      if (this.authService.isSAVUser()) {
+        // If user is SAV, subscribe to all messages
+        destination = '/topic/messages';
+      } else {
+        // If user is not SAV, subscribe to messages related to the user
+        const username = this.authService.username;
+        console.log("ATTENTION !!!!!!!!!!!!!!!!", username);
+        
+        destination = `/topic/${username}/messages`;
+      }
+
+      this.stompClient.subscribe(destination, (messages: any) => {
         const messageContent = JSON.parse(messages.body);
         const currentMessage = this.messagesSubject.getValue();
         currentMessage.push(messageContent);
-
         this.messagesSubject.next(currentMessage);
-
       })
     },
     (error : any) => {
       console.error('WebSocket Error:', error);
       // Handle connection error
     }
-    
-    
     )
   }
 
@@ -54,6 +63,4 @@ export class ChatService {
   loadMessages(message: ChatMessage) {
     return this.http.post<ChatMessage[]>(`${this.apiUrl}/messages`, message);
   }
-
 }
-

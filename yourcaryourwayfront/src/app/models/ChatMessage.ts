@@ -1,9 +1,9 @@
 export class ChatMessage {
-    senderUsername: string;
-    receiverUsername: string;
-    messageText: string;
+    senderUsername: String;
+    receiverUsername: String;
+    messageText: String;
 
-    constructor(senderUsername: string, receiverUsername : string, messageText : string) {
+    constructor(senderUsername: String, receiverUsername : String, messageText : String) {
         this.senderUsername = senderUsername;
         this.receiverUsername = receiverUsername;
         this.messageText = messageText;

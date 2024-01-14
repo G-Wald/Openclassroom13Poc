@@ -4,10 +4,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { ChatComponent } from './chat/chat.component';
 import { LoginComponent } from './login/login.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.routing';
 import { HttpClientModule } from '@angular/common/http';
 import { ChatService } from './services/chat.service';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -20,9 +21,9 @@ import { ChatService } from './services/chat.service';
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    //ChatModule.forRoot()
+    ReactiveFormsModule,
   ],
-  providers: [ChatService],
+  providers: [AuthService,ChatService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
